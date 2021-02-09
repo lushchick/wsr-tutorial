@@ -6,15 +6,22 @@ import {
   InputAreaTestkit,
   CardHeaderTestkit,
 } from 'wix-style-react/dist/testkit/puppeteer';
+import { ButtonUniDriver } from 'wix-style-react/dist/src/Button/Button.uni.driver';
+import { InputUniDriver } from 'wix-style-react/dist/src/Input/Input.uni.driver';
+import { DropdownUniDriver } from 'wix-style-react/dist/src/Dropdown/Dropdown.uni.driver';
+import { CheckboxUniDriver } from 'wix-style-react/dist/src/Checkbox/Checkbox.uni.driver';
+import { InputAreaUniDriver } from 'wix-style-react/dist/src/InputArea/InputArea.uni.driver';
+import { HeaderUniDriver } from 'wix-style-react/dist/src/Card/Header/Header.uni.driver';
+
 import DataHooks from '../src/components/App/DataHooks';
 
 describe('React application', () => {
-  let submitButtonTestkit: any;
-  let nameInputTestkit: any;
-  let colorDropdownTestkit: any;
-  let termsCheckboxTestkit: any;
-  let factInputAreaTestkit: any;
-  let submittedInfoCardHeaderTestkit: any;
+  let submitButtonTestkit: ButtonUniDriver;
+  let nameInputTestkit: InputUniDriver;
+  let colorDropdownTestkit: DropdownUniDriver;
+  let termsCheckboxTestkit: CheckboxUniDriver;
+  let factInputAreaTestkit: InputAreaUniDriver;
+  let submittedInfoCardHeaderTestkit: HeaderUniDriver;
 
   beforeEach(async () => {
     await page.goto('http://localhost:3000/'); // Make sure the app runs first, run - `npm run start`
