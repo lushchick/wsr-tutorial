@@ -1,232 +1,234 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
+  Page,
   Container,
   Row,
   Col,
-  Box,
   Card,
-  FormField,
+  Box,
   Input,
+  InputArea,
   Dropdown,
+  Checkbox,
+  Button,
+  FormField,
+  Text,
 } from 'wix-style-react';
 import s from './App.scss';
+import ActionsBar from './ActionsBar';
+import DataHooks from './DataHooks';
+
+export type SubmittedForm = {
+  name: string;
+  color: string | undefined;
+  funFact: string;
+};
+
+export type Form = {
+  name: string;
+  colorId: string;
+  agreeToTOC: boolean;
+  funFact: string;
+};
+
+export const formInitialValues: Form = {
+  name: '',
+  colorId: '',
+  agreeToTOC: false,
+  funFact: '',
+};
+
+const colors = [
+  { id: 0, value: 'Red' },
+  { id: 1, value: 'Blue' },
+  { id: 2, value: 'Green' },
+  { id: 3, value: 'Yellow' },
+  { id: 4, value: 'Pink' },
+];
+
+const getColorItemById = (id: number) =>
+  colors.find((color) => color.id === id);
 
 export default () => {
-  const [firstCharCount, setFirstCharCount] = useState(0);
-  const [secondCharCount, setSecondCharCount] = useState(0);
-  const [inputValue, setInputValue] = useState('');
-  const [dropdownSelectedId, setDropdownSelectId] = useState(0);
+  const [form, setForm] = useState<Form>({ ...formInitialValues });
+
+  const [submittedForm, setSubmittedForm] = useState<SubmittedForm | null>(
+    null,
+  );
+
+  const clearForm = useCallback(() => setForm({ ...formInitialValues }), []);
+
+  const isFormValid = useCallback(() => {
+    return form.name && form.agreeToTOC;
+  }, [form.name, form.agreeToTOC]);
+
+  const submitForm = useCallback(() => {
+    if (isFormValid()) {
+      const colorItem = getColorItemById(Number(form.colorId));
+      setSubmittedForm({
+        name: form.name,
+        color: colorItem && colors[colorItem.id].value,
+        funFact: form.funFact,
+      });
+    }
+  }, [form, isFormValid]);
 
   return (
-    <Container>
-      <Row>
-        <Col>
-          <Box className={s.textBox}>I am a full row</Box>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={6}>
-          <Box className={s.textBox}>I take half of the size</Box>
-        </Col>
-        <Col span={6}>
-          <Box className={s.textBox}>me too</Box>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={4}>
-          <Box className={s.textBox}>1 / 3</Box>
-        </Col>
-        <Col span={4}>
-          <Box className={s.textBox}>1 / 3</Box>
-        </Col>
-        <Col span={4}>
-          <Box className={s.textBox}>1 / 3</Box>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={4}>
-          <Box className={s.textBox}>1 / 3</Box>
-        </Col>
-        <Col span={8}>
-          <Box className={s.textBox}>2 / 3</Box>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={6}>
+    <Page height="100vh">
+      <Page.Header
+        title="WSR Form"
+        actionsBar={
+          <ActionsBar
+            onClearClicked={clearForm}
+            onSubmitClicked={submitForm}
+            disabled={!isFormValid()}
+          />
+        }
+      />
+      <Page.Content>
+        <Container>
           <Row>
-            <Col span={6}>
-              <Box className={s.textBox}>I take half of the size</Box>
-            </Col>
-            <Col span={6}>
-              <Box className={s.textBox}>me too</Box>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-      <Row stretchViewsVertically>
-        <Col span={6}>
-          <Card stretchVertically>
-            <Card.Header title="my first card" />
-            <Card.Divider />
-            <Card.Content>some content</Card.Content>
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Card.Header title="What is Lorem Ipsum?" />
-            <Card.Divider />
-            <Card.Content>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum.
-            </Card.Content>
-          </Card>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={4}>
-          <Card>
-            <Card.Header title="my first card" />
-            <Card.Divider />
-            <Card.Content>some content</Card.Content>
-          </Card>
-        </Col>
-        <Col span={4}>
-          <Card>
-            <Card.Header title="my first card" subtitle="nice" />
-            <Card.Divider />
-            <Card.Content>some more content</Card.Content>
-          </Card>
-        </Col>
-        <Col span={4}>
-          <Card>
-            <Card.Header title="my first card" subtitle="cool" />
-            <Card.Divider />
-            <Card.Content>some more content again</Card.Content>
-          </Card>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={6}>
-          <Card>
-            <Card.Header title="first card" />
-            <Card.Divider />
-            <Card.Content>
-              <Row>
-                <Col span={4}>first part</Col>
-                <Col span={4}>second part</Col>
-                <Col span={4}>third part</Col>
-              </Row>
-            </Card.Content>
-          </Card>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <Card>
-            <Card.Header title="Forms" />
-            <Card.Divider />
-            <Card.Content>
-              <Row>
-                <Col span={2}>
-                  <form>
-                    <Box marginBottom={3}>
-                      <FormField
-                        label="An input field"
-                        required
-                        infoContent="Help me fill the field"
-                        charCount={5 - firstCharCount}
-                      >
+            <Col span={8}>
+              <Card>
+                <Card.Header
+                  title="WSR Form"
+                  subtitle="Create your own page with wix-style-react"
+                />
+                <Card.Content>
+                  <Row>
+                    <Col span={6}>
+                      <FormField label="Name" required>
                         <Input
-                          onChange={(event) =>
-                            setFirstCharCount(event.target.value.length)
-                          }
+                          dataHook={DataHooks.NAME}
+                          placeholder="Enter a name"
+                          value={form.name}
+                          onChange={useCallback(
+                            (e) => setForm({ ...form, name: e.target.value }),
+                            [form],
+                          )}
                         />
                       </FormField>
-                    </Box>
-                    <Box marginBottom={3}>
-                      <FormField
-                        label="An input field"
-                        required
-                        infoContent="Help me fill the field"
-                        charCount={5 - secondCharCount}
-                      >
-                        <Input
-                          onChange={(event) =>
-                            setSecondCharCount(event.target.value.length)
-                          }
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col span={6}>
+                      <FormField label="Favorite Color">
+                        <Dropdown
+                          dataHook={DataHooks.FAVORITE_COLOR}
+                          placeholder="Enter a color"
+                          options={colors}
+                          selectedId={form.colorId}
+                          onSelect={useCallback(
+                            (option) =>
+                              setForm({ ...form, colorId: option.id }),
+                            [form],
+                          )}
                         />
                       </FormField>
-                    </Box>
-                  </form>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={8}>
+                      <Checkbox
+                        dataHook={DataHooks.TERMS}
+                        checked={form.agreeToTOC}
+                        onChange={useCallback(
+                          () =>
+                            setForm({
+                              ...form,
+                              agreeToTOC: !form.agreeToTOC,
+                            }),
+                          [form],
+                        )}
+                      >
+                        I agree for the terms of use
+                      </Checkbox>
+                    </Col>
+                    <Col span={4}>
+                      <Box align="right">
+                        <ActionsBar
+                          onClearClicked={clearForm}
+                          onSubmitClicked={submitForm}
+                          disabled={!isFormValid()}
+                        />
+                      </Box>
+                    </Col>
+                  </Row>
+                </Card.Content>
+              </Card>
+            </Col>
+            <Col span={4}>
+              <Row>
+                <Col>
+                  <Card>
+                    <Card.Header title="Extra" />
+                    <Card.Content>
+                      <Row>
+                        <Col>
+                          <FormField label="Fun Fact">
+                            <InputArea
+                              dataHook={DataHooks.FUN_FACT}
+                              value={form.funFact}
+                              onChange={useCallback(
+                                (e) =>
+                                  setForm({
+                                    ...form,
+                                    funFact: e.target.value,
+                                  }),
+                                [form],
+                              )}
+                              placeholder="Enter something interesting"
+                              rows={4}
+                            />
+                          </FormField>
+                        </Col>
+                      </Row>
+                    </Card.Content>
+                  </Card>
                 </Col>
               </Row>
-            </Card.Content>
-          </Card>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <Card>
-            <Card.Header title="Inputs and Selection" />
-            <Card.Content>
-              <Container fluid>
+              {submittedForm ? (
                 <Row>
-                  <Col span={8}>
-                    <FormField
-                      label="<Input/> - A simple Input"
-                      infoContent="Use this for regular text input"
-                    >
-                      <Input
-                        status="error"
-                        statusMessage="Validation error"
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
+                  <Col>
+                    <Card>
+                      <Card.Header
+                        dataHook={DataHooks.SUBMITTED_INFO}
+                        title="Submitted Info"
                       />
-                    </FormField>
+                      <Card.Content>
+                        {[
+                          {
+                            title: 'Name:',
+                            value: submittedForm.name,
+                          },
+                          {
+                            title: 'Favorite Color:',
+                            value: submittedForm.color,
+                          },
+                          {
+                            title: 'Fun Fact:',
+                            value: submittedForm.funFact,
+                          },
+                        ].map((category) => (
+                          <Row key={category.title}>
+                            <Col span={6}>
+                              <Text>{category.title}</Text>
+                            </Col>
+                            <Col span={6}>
+                              <Text weight="normal">{category.value}</Text>
+                            </Col>
+                          </Row>
+                        ))}
+                      </Card.Content>
+                    </Card>
                   </Col>
                 </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormField
-                      label="<Dropdown/> - A simple select component"
-                      infoContent="Use this to pick a value from a set"
-                    >
-                      <Dropdown
-                        selectedId={dropdownSelectedId}
-                        onSelect={(option) =>
-                          setDropdownSelectId(Number(option.id))
-                        }
-                        options={[
-                          {
-                            id: 0,
-                            value: 'first option',
-                          },
-                          {
-                            id: 1,
-                            value: 'second option',
-                          },
-                          {
-                            id: 2,
-                            value: 'third option',
-                          },
-                        ]}
-                      />
-                    </FormField>
-                  </Col>
-                </Row>
-              </Container>
-            </Card.Content>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+              ) : null}
+            </Col>
+          </Row>
+        </Container>
+      </Page.Content>
+    </Page>
   );
 };
